@@ -6,12 +6,13 @@ import android.media.MediaMetadata
 import android.media.session.MediaController
 import android.media.session.MediaSessionManager
 import android.media.session.PlaybackState
+import com.ross.livemedia.notification.LiveNotificationManager
 import com.ross.livemedia.notification.MediaNotificationListenerService
 import com.ross.livemedia.utils.Logger
 
 class MediaStateManager(
     private val context: Context,
-    private val onStateUpdated: (MusicState) -> Unit,
+    private val notificationManager: LiveNotificationManager,
     private val noActiveMedia: () -> Unit,
 ) {
     private val logger = Logger("MediaManager")
@@ -107,12 +108,17 @@ class MediaStateManager(
     private fun pushCurrentState() {
         logger.info("pushCurrentState")
 
-        val newState = getUpdatedMusicState()
+        var newState = getUpdatedMusicState()
 
         if (newState != null && newState != currentState) {
+            val lastTitle = currentState?.title
+            val lastTitleStartTime = currentState?.titleStartTime ?: System.currentTimeMillis()
+
+            newState = newState.withUpdatedTitleStartTime(lastTitle, lastTitleStartTime)
+
             currentState = newState
             logger.info("State was updated to: $newState")
-            onStateUpdated(newState)
+            notificationManager.updateNotification(newState)
         }
     }
 

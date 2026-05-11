@@ -48,12 +48,16 @@ class MediaNotificationListenerService : NotificationListenerService() {
     }
 
     override fun onNotificationRemoved(sbn: StatusBarNotification?, rankingMap: RankingMap?, reason: Int) {
-        if (sbn?.id == NOTIFICATION_ID && sbn.packageName == packageName) {
+        if (sbn == null) return
+
+        if (sbn.id == NOTIFICATION_ID && sbn.packageName == packageName) {
             // REASON_CANCEL = 2 (User dismissed single notification)
             // REASON_CANCEL_ALL = 3 (User dismissed all notifications)
             if (reason == REASON_CANCEL || reason == REASON_CANCEL_ALL) {
                 viewModel.onNotificationDismissed()
             }
+        } else {
+            viewModel.onNotificationRemoved(sbn)
         }
     }
 

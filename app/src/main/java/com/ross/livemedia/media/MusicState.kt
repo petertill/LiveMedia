@@ -5,6 +5,16 @@ import android.media.MediaMetadata
 import android.media.session.PlaybackState
 import android.net.Uri
 import androidx.core.net.toUri
+import android.app.Notification
+import android.content.Context
+import android.content.Intent
+import android.app.PendingIntent
+import com.bumptech.glide.Glide
+import com.ross.livemedia.notification.LiveNotification
+import com.ross.livemedia.notification.MediaNotificationListenerService
+import com.ross.livemedia.storage.StorageHelper
+import com.ross.livemedia.utils.*
+import androidx.core.app.NotificationCompat
 
 data class MusicState(
     val title: String,
@@ -14,10 +24,166 @@ data class MusicState(
     val isPlaying: Boolean,
     val duration: Long,
     val position: Long,
-    val packageName: String,
+    override val packageName: String,
     val mediaSessionActive: Boolean,
-    val albumName: String
-) {
+    val albumName: String,
+    override val timestamp: Long = System.currentTimeMillis(),
+    val titleStartTime: Long = System.currentTimeMillis()
+) : LiveNotification {
+
+    override val id: String get() = "music_$packageName"
+    override val priority: Int get() = if (isPlaying) 100 else 50
+    override val isPersistent: Boolean get() = true
+
+    fun withUpdatedTitleStartTime(lastTitle: String?, lastTitleStartTime: Long): MusicState {
+        return if (title == lastTitle) {
+            this.copy(titleStartTime = lastTitleStartTime)
+        } else {
+            this
+        }
+    }
+
+    override fun buildNotification(
+        context: Context,
+        storageHelper: StorageHelper,
+        channelId: String
+    ): Notification {
+        var contentIntent: PendingIntent? = null
+        val launchIntent = context.packageManager.getLaunchIntentForPackage(packageName)
+
+        if (launchIntent != null) {
+            launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            contentIntent = PendingIntent.getActivity(
+                context, 0,
+                launchIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+        }
+
+        val musicAppName = context.packageManager.getAppName(packageName) as String
+
+        val notification = NotificationCompat.Builder(context, channelId)
+            .setSmallIcon(MusicProvider.getByAppName(musicAppName).iconRes)
+            .setContentTitle(title)
+            .setOngoing(true)
+            .setCategory(Notification.CATEGORY_PROGRESS)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setShortCriticalText(providePillText(
+                title,
+                position.toInt(),
+                duration.toInt(),
+                isPlaying,
+                storageHelper.pillContent,
+                storageHelper.isScrollEnabled,
+                System.currentTimeMillis() - titleStartTime
+            ))
+            .setRequestPromotedOngoing(true) // Android 16 Live Activity Chip
+            .setShowWhen(false)
+            .setStyle(buildBaseBigTextStyle())
+            .setSubText(
+                combineProviderAndTimestamp(
+                    musicAppName,
+                    storageHelper.showMusicProvider,
+                    storageHelper.showTimestamp,
+                    position.toInt(),
+                    duration.toInt()
+                )
+            )
+
+        if (storageHelper.showAlbumArt) {
+            var art: Bitmap? = albumArt
+            if (art == null && albumArtUri != null) {
+                try {
+                    art = Glide.with(context)
+                        .asBitmap()
+                        .load(albumArtUri)
+                        .submit(144, 144)
+                        .get()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+            notification.setLargeIcon(art)
+        }
+
+        if (storageHelper.showProgress) {
+            notification.setProgress(
+                duration.toInt(),
+                position.toInt(),
+                false
+            )
+        }
+
+        if (storageHelper.showArtistName || storageHelper.showAlbumName) {
+            notification.setContentText(
+                buildArtisAlbumTitle(
+                    storageHelper.showArtistName,
+                    storageHelper.showAlbumName,
+                    this
+                )
+            )
+        }
+
+        if (storageHelper.showActionButtons) {
+            notification.addAction(prevMusicAction(context))
+            notification.addAction(if (isPlaying) pauseMusicAction(context) else playMusicAction(context))
+            notification.addAction(nextMusicAction(context))
+        }
+
+        if (contentIntent != null) {
+            notification.setContentIntent(contentIntent)
+        }
+
+        return notification.build()
+    }
+
+    override fun getUpdateInterval(storageHelper: StorageHelper): Long? {
+        val isTitleScrollable = title.trim().length > 7
+        val shouldScroll = storageHelper.isScrollEnabled && isTitleScrollable
+
+        val shouldRun = isPlaying || shouldScroll
+        return if (shouldRun) {
+            if (shouldScroll) 500L else 1000L
+        } else {
+            null
+        }
+    }
+
+    private fun playMusicAction(context: Context) = createAction(
+        android.R.drawable.ic_media_play,
+        "Play",
+        MediaStateManager.ACTION_PLAY_PAUSE,
+        MediaStateManager.REQUEST_CODE_PLAY_PAUSE,
+        context,
+        MediaNotificationListenerService::class.java
+    )
+
+    private fun pauseMusicAction(context: Context) = createAction(
+        android.R.drawable.ic_media_pause,
+        "Pause",
+        MediaStateManager.ACTION_PLAY_PAUSE,
+        MediaStateManager.REQUEST_CODE_PLAY_PAUSE,
+        context,
+        MediaNotificationListenerService::class.java
+    )
+
+    private fun prevMusicAction(context: Context) = createAction(
+        android.R.drawable.ic_media_previous,
+        "Previous",
+        MediaStateManager.ACTION_SKIP_TO_PREVIOUS,
+        MediaStateManager.REQUEST_CODE_PREVIOUS,
+        context,
+        MediaNotificationListenerService::class.java
+    )
+
+    private fun nextMusicAction(context: Context) = createAction(
+        android.R.drawable.ic_media_next,
+        "Next",
+        MediaStateManager.ACTION_SKIP_TO_NEXT,
+        MediaStateManager.REQUEST_CODE_NEXT,
+        context,
+        MediaNotificationListenerService::class.java
+    )
+
     constructor(
         metadata: MediaMetadata,
         playbackState: PlaybackState,
