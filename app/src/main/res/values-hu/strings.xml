@@ -1,0 +1,72 @@
+<resources>
+    <string name="app_name">LiveMedia</string>
+    <string name="accessibility_service_description">Érzékeli a Gyorsbeállítások eseményeit</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Beállítások</string>
+
+    <!-- Section Headers -->
+    <string name="section_notification_body">Értesítés törzse</string>
+    <string name="section_status_bar_pill">Állapotsori kapszula</string>
+
+    <!-- Notification Body Settings -->
+    <string name="setting_show_album_art">Albumborító megjelenítése</string>
+    <string name="setting_show_album_art_desc">Az albumborító megjelenítése az értesítésben.</string>
+
+    <string name="setting_show_artist_name">Művész nevének megjelenítése</string>
+    <string name="setting_show_artist_name_desc">A művész nevének megjelenítése a dal címe alatt.</string>
+
+    <string name="setting_show_album_name">Album nevének megjelenítése</string>
+    <string name="setting_show_album_name_desc">Az album nevének megjelenítése az értesítés részleteinél.</string>
+
+    <string name="setting_show_action_buttons">Vezérlőgombok megjelenítése</string>
+    <string name="setting_show_action_buttons_desc">Vezérlők hozzáadása: Lejátszás/Szünet, Következő és Előző.</string>
+
+    <string name="setting_show_progress">Folyamat mutatása</string>
+    <string name="setting_show_progress_desc">A dal előrehaladásának mutatása</string>
+
+    <string name="setting_show_music_provider">Zenei szolgáltató nevének megjelenítése</string>
+    <string name="setting_show_music_provider_desc">Megmutatja, melyik zenei alkalmazást használja (Spotify/YT Music, stb…)</string>
+
+    <string name="setting_show_timestamp">Időbélyegek megjelenítése</string>
+    <string name="setting_show_timestamp_desc">Az eltelt idő és a teljes hossz megjelenítése a lejátszón.</string>
+
+    <string name="setting_hide_on_qs">Elrejtés a Gyorsbeállításoknál</string>
+    <string name="setting_hide_on_qs_desc">A médiaértesítés elrejtése a Gyorsbeállítások vagy az Értesítési sáv megnyitásakor. Kisegítő lehetőségek engedélyezése szükséges.</string>
+
+    <!-- Status Bar Pill Options -->
+    <string name="pill_option_title">Dal címe</string>
+    <string name="pill_option_title_desc">A szám címének megjelenítése az állapotsori kapszulában</string>
+    <string name="setting_scroll_text">Cím görgetése</string>
+    <string name="setting_scroll_text_desc">A dal címének animálása, ha az 7 karakternél hosszabb</string>
+
+    <string name="pill_option_elapsed">Eltelt idő</string>
+    <string name="pill_option_elapsed_desc">Az aktuális lejátszási pozíció mutatása. Megállításkor a cím mindenképpen látható marad</string>
+
+    <string name="pill_option_remaining">Hátralévő idő</string>
+    <string name="pill_option_remaining_desc">A dalból hátralévő idő mutatása. Megállításkor a cím mindenképpen látható marad</string>
+
+    <!-- Permission Screen -->
+    <string name="permission_notification_listener_title">Értesítés-olvasási engedély szükséges</string>
+    <string name="permission_notification_listener_desc">Az alkalmazásnak hozzáférésre van szüksége az értesítésekhez a lejátszás érzékeléséhez és az élő frissítéshez. Kérjük, adja meg az engedélyt a rendszerbeállításokban.</string>
+    <string name="permission_notification_listener_button">Értesítés-olvasás engedélyezése</string>
+
+    <string name="permission_post_notification_title">Értesítésküldési engedély szükséges</string>
+    <string name="permission_post_notification_desc">Az alkalmazásnak engedélyre van szüksége értesítések küldéséhez a médiavezérlők megjelenítéséhez.</string>
+    <string name="permission_post_notification_button">Értesítésküldés engedélyezése</string>
+
+    <string name="permission_accessibility_title">Kisegítő lehetőségek engedélyezése szükséges</string>
+    <string name="permission_accessibility_desc">Az alkalmazásnak szüksége van a kisegítő lehetőségekre a Gyorsbeállítások megnyitásának érzékeléséhez. Kérjük, adja meg az engedélyt a rendszerbeállításokban.</string>
+    <string name="permission_accessibility_button">Kisegítő lehetőségek engedélyezése</string>
+    <string name="permission_skip_button">Kihagyás</string>
+
+    <string name="permission_all_granted">Minden engedély megadva!</string>
+
+    <!-- App Selection Screen -->
+    <string name="section_app_selection">Alkalmazásvezérlés</string>
+    <string name="setting_app_selection">Alkalmazások kiválasztása</string>
+    <string name="setting_app_selection_desc">Válassza ki, mely alkalmazásokkal működjön együtt a Live Media.</string>
+    <string name="app_selection_title">Alkalmazások kiválasztása</string>
+    <string name="app_selection_enable_all">Összes engedélyezése</string>
+    <string name="app_selection_disable_all">Összes tiltása</string>
+</resources>
