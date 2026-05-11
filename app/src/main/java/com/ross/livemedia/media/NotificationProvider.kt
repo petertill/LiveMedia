@@ -2,7 +2,7 @@ package com.ross.livemedia.media
 
 import com.ross.livemedia.R
 
-enum class MusicProvider(
+enum class NotificationProvider(
     val appName: String,
     val packageName: String,
     val iconRes: Int
@@ -77,6 +77,11 @@ enum class MusicProvider(
         "com.qobuz.music",
         R.drawable.qobuz_com
     ),
+    PHONE(
+        "Phone",
+        "com.google.android.dialer",
+        R.drawable.call
+    ),
     UAPP(
         "USB Audio Player PRO",
         "com.extreamsd.usbaudioplayerpro",
@@ -84,7 +89,7 @@ enum class MusicProvider(
     );
 
     companion object {
-        fun getByAppName(appName: String): MusicProvider {
+        fun getByAppName(appName: String): NotificationProvider {
             return entries.firstOrNull { it.appName == appName } ?: UNKNOWN
         }
     }

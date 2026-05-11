@@ -4,6 +4,7 @@ import android.app.Notification
 import android.content.Context
 import android.service.notification.StatusBarNotification
 import androidx.core.app.NotificationCompat
+import com.ross.livemedia.media.NotificationProvider
 import com.ross.livemedia.notification.LiveNotification
 import com.ross.livemedia.storage.StorageHelper
 
@@ -22,7 +23,7 @@ data class CallNotification(
         channelId: String
     ): Notification {
         return NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(android.R.drawable.stat_sys_phone_call)
+            .setSmallIcon(NotificationProvider.getByAppName("Phone").iconRes)
             .setContentTitle("Incoming Call")
             .setContentText(callerName)
             .setShortCriticalText(callerName)
